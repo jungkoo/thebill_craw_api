@@ -1,9 +1,15 @@
 # -*- coding: utf-8 -*-
 from collections import namedtuple
+from telnetlib import EC
+
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
+from selenium.webdriver.support.wait import WebDriverWait
+
 from thebill import Login
 
 WithDrawResult = namedtuple('WithDrawResult', 'date user_id user_name phone4 status')
+
 
 class WithDraw:
     def __init__(self):
@@ -12,6 +18,7 @@ class WithDraw:
         self._sub_menu_code = ""
         self._load_page()
         self._goto_sub_menu("CMS5010")
+        self._set_display_size(100)
 
     def _load_page(self):
         """
@@ -29,15 +36,16 @@ class WithDraw:
         l: Login = Login.current()
         l.close()
 
-    def _get_value(self, attr_id):
+    def _get_value(self, attr_name):
         d = self._current_driver
-        obj = d.find_element_by_id(attr_id)
+        obj = d.find_element_by_name(attr_name)
         val = obj.get_attribute("value")
         return val
 
-    def _set_value(self, attr_id, value):
+    def _set_value(self, attr_name, value):
         d = self._current_driver
-        obj = d.find_element_by_id(attr_id)
+        obj = d.find_element_by_name(attr_name)
+        obj.clear()
         obj.send_keys(value)
 
     def get_start_date(self):
@@ -70,19 +78,16 @@ class WithDraw:
         sub_menu.click()
         self._sub_menu_code = menu_code
 
-    def get_display_size(self):
+    def _set_display_size(self, value=100):
         select_box = self._current_driver.find_element_by_id("setListPerPage")
         display = Select(select_box)
-        display.select_by_value()
-
-    def set_display_size(self, value):
-        select_box = self._current_driver.find_element_by_id("setListPerPage")
-        display = Select(select_box)
-        display.select_by_visible_text(value)
+        display.select_by_value(str(value))
 
     def submit(self):
         search = self._current_driver.find_element_by_css_selector("#content_wrap input:nth-child(1)")
-        search.submit()
+        search.click()
+        import time
+        time.sleep(1)
         return self
 
     def result(self):

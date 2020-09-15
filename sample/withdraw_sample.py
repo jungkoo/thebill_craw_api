@@ -9,3 +9,10 @@ if __name__ == "__main__":
     withdraw = WithDraw()
     for r in withdraw.result():
         print(r)
+
+    print("# 검색")
+    withdraw.set_start_date("2020-08-14")
+    withdraw.set_member_name("홍길동")
+    withdraw.submit()
+    for r in withdraw.result():
+        print(r)
