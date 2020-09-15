@@ -1,22 +1,17 @@
 # -*- coding: utf-8 -*-
 from collections import namedtuple
-
+from selenium.webdriver.support.select import Select
 from thebill import Login
 
-WithDrawResult = namedtuple('WithDrawResult', 'date code name phone4 status')
-
+WithDrawResult = namedtuple('WithDrawResult', 'date user_id user_name phone4 status')
 
 class WithDraw:
     def __init__(self):
         self._login: Login = Login.current()
         self._current_driver = self._login.webdriver()  # login 한 브라우저창을 재활용한다.
-        self._start_date = None
-        self._end_date = None
-        self._name = None
-        self._code = None
-        self._result_size = 10
         self._sub_menu_code = ""
         self._load_page()
+        self._goto_sub_menu("CMS5010")
 
     def _load_page(self):
         """
@@ -34,23 +29,75 @@ class WithDraw:
         l: Login = Login.current()
         l.close()
 
+    def _get_value(self, attr_id):
+        d = self._current_driver
+        obj = d.find_element_by_id(attr_id)
+        val = obj.get_attribute("value")
+        return val
+
+    def _set_value(self, attr_id, value):
+        d = self._current_driver
+        obj = d.find_element_by_id(attr_id)
+        obj.send_keys(value)
+
+    def get_start_date(self):
+        return self._get_value("startDate")
+
+    def set_start_date(self, value):
+        self._set_value("startDate", value)
+
+    def get_end_date(self):
+        return self._get_value("endDate")
+
+    def set_end_date(self, value):
+        self._set_value("endDate", value)
+
+    def get_member_name(self):
+        return self._get_value("srchMemberName")
+
+    def set_member_name(self, value):
+        return self._set_value("srchMemberName", value)
+
+    def get_member_id(self):
+        return self._get_value("srchMemberId")
+
+    def set_member_id(self, value):
+        self._set_value("srchMemberId", value)
+
     def _goto_sub_menu(self, menu_code="CMS3510"):
         d = self._current_driver
         sub_menu = d.find_element_by_id(menu_code)
         sub_menu.click()
         self._sub_menu_code = menu_code
 
-    def member_details(self):
+    def get_display_size(self):
+        select_box = self._current_driver.find_element_by_id("setListPerPage")
+        display = Select(select_box)
+        display.select_by_value()
+
+    def set_display_size(self, value):
+        select_box = self._current_driver.find_element_by_id("setListPerPage")
+        display = Select(select_box)
+        display.select_by_visible_text(value)
+
+    def submit(self):
+        search = self._current_driver.find_element_by_css_selector("#content_wrap input:nth-child(1)")
+        search.submit()
+        return self
+
+    def result(self):
         """
-        회원개별출금
+        자동이체 -> 출금결과 조회
         :return:
         """
-        if "CMS3510" != self._sub_menu_code:
-            self._goto_sub_menu("CMS3510")
+        for row in self._current_driver.find_elements_by_css_selector("#v-tab01>tbody>tr[id='v-list']"):
+            cols = [x.text.strip() for x in row.find_elements_by_css_selector("td")]
+            yield WithDrawResult(date=cols[2][:10],
+                                 user_id=cols[3],
+                                 user_name=cols[4],
+                                 phone4=cols[5].split("-")[2],
+                                 status=cols[9].split("[")[0].strip())
 
-        # select 조건 변경
 
-        # 조회
 
-        # 결과 리턴
 

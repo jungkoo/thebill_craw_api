@@ -7,4 +7,5 @@ login.headless(False)
 
 if __name__ == "__main__":
     withdraw = WithDraw()
-    withdraw.goto_sub_menu()
+    for r in withdraw.result():
+        print(r)
