@@ -1,11 +1,6 @@
 # -*- coding: utf-8 -*-
 from collections import namedtuple
-from telnetlib import EC
-
-from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
-from selenium.webdriver.support.wait import WebDriverWait
-
 from thebill import Login
 
 WithDrawResult = namedtuple('WithDrawResult', 'date user_id user_name phone4 status')
