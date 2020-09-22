@@ -101,7 +101,7 @@ class WithDraw:
                                  user_id=cols[3],
                                  user_name=cols[4],
                                  phone4=cols[5].split("-")[2],
-                                 status=cols[9].split("[")[0].strip())
+                                 status=cols[9].split("[")[0].strip().replace("\n", ""))
 
 
 

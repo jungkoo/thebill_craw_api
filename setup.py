@@ -27,6 +27,7 @@ setup(
     install_requires=[
         'typing_extensions',
         'selenium>=3.131.0',
+        'pyrebase',
     ],
     setup_requires=[
         'docutils>=0.14, <1.0',
