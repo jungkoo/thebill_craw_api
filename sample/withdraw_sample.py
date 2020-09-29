@@ -44,8 +44,13 @@ if __name__ == "__main__":
         last_date = max(r.date if ("정상처리" in r.status or "출금성공" in r.status) else "",
                         "" if find_user is None else find_user.get("last_date") or "")
         if find_user is not None and r.date <= find_user.get("date"):
-            print("[SKIP] update 할 필요가 없는 데이터 =>", last_date, r, find_user)
-            continue
+            if last_date <= find_user.get("last_date"):
+                # print("[SKIP] update 할 필요가 없는 데이터 =>", last_date, r, find_user)
+                continue
+            else:
+                print("[UPDATE] last_date update 만 필요 =>", last_date, r, find_user)
+                db.child("the_bill").child(key).update(dict(last_date=last_date))
+                continue
         count += 1
         if count % 100 == 0:
             print("INTERVAL - {}".format(count))
