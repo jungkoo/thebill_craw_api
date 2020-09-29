@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 from collections import namedtuple
 from selenium.webdriver.support.select import Select
-from thebill import Login
+from thebill import WebLogin
 
 WithDrawResult = namedtuple('WithDrawResult', 'date user_id user_name phone4 status')
 
 
 class WithDraw:
     def __init__(self):
-        self._login: Login = Login.current()
+        self._login: WebLogin = WebLogin.current()
         self._current_driver = self._login.webdriver()  # login 한 브라우저창을 재활용한다.
         self._sub_menu_code = ""
         self._load_page()
@@ -28,7 +28,7 @@ class WithDraw:
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        l: Login = Login.current()
+        l: WebLogin = WebLogin.current()
         l.close()
 
     def _get_value(self, attr_name):
