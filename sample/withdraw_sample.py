@@ -4,15 +4,12 @@ import pyrebase
 import hashlib
 from urllib.parse import quote
 import datetime
-
-end_date = datetime.date.today()
-start_date = end_date - datetime.timedelta(7)
-start_date_str = start_date.strftime("%Y-%m-%d")
-end_date_str = end_date.strftime("%Y-%m-%d")
-
-# firebase 연결 정보
 from thebill.payment import PaymentAPI
 
+start_date_str = (datetime.date.today() - datetime.timedelta(2)).strftime("%Y-%m-%d")
+end_date_str = (datetime.date.today() + datetime.timedelta(5)).strftime("%Y-%m-%d")
+
+# firebase 연결 정보
 firebaseConfig = {
     "apiKey": "ddasfdsaf-Ssg",
     "authDomain": "asdfasdfasdf.firebaseapp.com",
@@ -40,6 +37,7 @@ if __name__ == "__main__":
     db = firebase.database()
     api = PaymentAPI()
     count = 0
+
     for r in api.with_draw_result(start_date=start_date_str, end_date=end_date_str):
         key = key_create(r)
         find_user = db.child("the_bill").child(key).get().val()
@@ -53,4 +51,5 @@ if __name__ == "__main__":
             print("INTERVAL - {}".format(count))
         new_data = dict(user_id=r.user_id, date=r.date, status=r.status, last_date=last_date)
         db.child("the_bill").child(key).set(new_data)
-        print(count, key, last_date, "||old=>", find_user, "||new=>", r, "||update=>", new_data)
+        # print(count, key, last_date, "||old=>", find_user, "||new=>", r, "||update=>", new_data)
+    print("[완료] 총 {} 건".format(count))
