@@ -15,7 +15,7 @@ class PaymentAPI:
         :return:
         """
         seed_url = "https://www.thebill.co.kr/cms2/cmsPayList.json"
-        req_data = dict(sortGubn1="01", sortGubn2="A", setListPerPage=10, divAcctYN="N", searchDateType="send",
+        req_data = dict(sortGubn1="01", sortGubn2="D", setListPerPage=10, divAcctYN="N", searchDateType="send",
                         startDate=start_date, endDate=end_date, serviceType="", statusCd="", srchMemberName="",
                         srchMemberId="", srchDealWon="", srchServiceName="", srchCusGubn1="", srchCusGubn2="", pageno=1)
         for row in self._session.result_list_generator(seed_url, **req_data):
